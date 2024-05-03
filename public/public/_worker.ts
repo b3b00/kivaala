@@ -21,25 +21,19 @@ type PRequest = {
 
 const router = Router()
 
-async function streamToText(stream: ReadableStream<Uint8Array>|null): Promise<string|null> {
-    if (stream) {
-        let r = new Response(stream);
-        return await r.text()
-    }
-    return null;
+async function streamToText(stream: ReadableStream<Uint8Array>): Promise<string> {
+    let r = new Response(stream);
+    return await r.text()
 }
 
 const withPostQuery = async (request:PRequest) => {
-    
-    let body = await streamToText(request.body as ReadableStream<Uint8Array>);
-    if (body) {
-        console.log(body);
-        var params = new URLSearchParams(body);
-        request.postQuery={};
-        params.forEach((value,key,parent) => {
-            request.postQuery[key] = value;
-        })    
-    }    
+    let body = await streamToText(request.body);
+    console.log(body);
+    var params = new URLSearchParams(body);
+    request.postQuery={};
+    params.forEach((value,key,parent) => {
+        request.postQuery[key] = value;
+    })    
   }
 
 
@@ -78,15 +72,22 @@ async function renderJson(env:Env, request:PRequest, data:any) {
     response.headers.set('Content-Type', 'application/json')
     return response
 }
+ 
+router.get<PRequest, CF>('/sum/:x/:y', async (request:PRequest, env:any) => {
+    try {
+        const x:number = parseInt(request.params.x);
+        const y : number = parseInt(request.params.y);
+        const dumb:Dumb = {x,y};
+        const s = await sum(dumb);
+        return await renderOkJson(env, request, {sum:s,text:env.VARIABLE+'_'+s});        
+    }
+    catch(e) {
+        return await renderInternalServorErrorJson(env,request,            
+            errorResult([`error while getting sum :>${request.params.x}< and :>${request.params.y}<`,e.message],null));
+    }
+});
 
 
-router.get<PRequest, CF>('/key/:key', async (request:PRequest, env:Env) => {
-
-})
-
-router.post<PRequest, CF>('/key/:key' , async(request:PRequest, env:Env) => {
-
-})
 
 
 
