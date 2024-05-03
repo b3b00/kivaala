@@ -1,0 +1,6 @@
+[vars]
+
+[[d1_databases]]
+binding = "D1_KEYS"
+database_name = "keys"
+database_id = "20a37272-a7c0-4933-8e12-b2fb03446f4e"

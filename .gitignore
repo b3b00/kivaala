@@ -1,0 +1,14 @@
+node_modules/
+package-lock.json
+dist/*
+.wrangler/*
+.vscode/*
+.dev.vars
+wrangler.dev.toml
+public/bundle.*
+public/_worker.js
+public/src/types.js
+.wrangler/
+public/src/logic.js
+public/src/types.js
+.env
